@@ -3,9 +3,9 @@
 
 void WebCamera::open_stream(int cam_device_id, CamResolution res)
 {
-    camera_stream = std::make_unique<cv::VideoCapture>(cam_device_id);
-    camera_stream->set(CV_CAP_PROP_FRAME_WIDTH, res.width);
-    camera_stream->set(CV_CAP_PROP_FRAME_HEIGHT,res.height);
+    camera_stream = std::make_unique<cv::VideoCapture>(cam_device_id, cv::CAP_V4L2);
+    camera_stream->set(cv::CAP_PROP_FRAME_WIDTH, res.width);
+    camera_stream->set(cv::CAP_PROP_FRAME_HEIGHT,res.height);
 }
 
 void WebCamera::close_stream()

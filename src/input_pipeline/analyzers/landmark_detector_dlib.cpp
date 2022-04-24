@@ -9,7 +9,7 @@ LandmarkDetectorDlib::LandmarkDetectorDlib(const char *fld_model_path)
 std::array<cv::Point, 68> LandmarkDetectorDlib::detect_landmarks(const cv::Mat &frame, const cv::Rect &face)
 {
     cv::Mat img_grey;
-    cv::cvtColor(frame, img_grey, CV_BGR2GRAY);
+    cv::cvtColor(frame, img_grey, cv::COLOR_BGR2GRAY);
     dlib::cv_image<unsigned char> img(img_grey);
 
     dlib::rectangle face_region = dlib::rectangle(face.x, face.y, face.x+face.width, face.y+face.height);

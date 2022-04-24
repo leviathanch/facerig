@@ -13,6 +13,10 @@
 
 int main(int argc, char* argv[])
 {
+    int keycode = 0;
+    cv::Mat image;
+    std::vector<cv::Rect> faces;
+
     WindowSize render_window(800, 600);
     Camera render_camera(glm::vec3(15.0, 5.0, 0.0), glm::vec3(0.0, 5.0, 0.0));
     std::unique_ptr<Render> render = std::make_unique<Render>(render_camera, render_window);
@@ -42,28 +46,28 @@ int main(int argc, char* argv[])
     webcam->open_stream(0, cam_res);
     while (true)
     {
-        cv::Mat image = webcam->get_image();
-        std::vector<cv::Rect> faces = face_detector->detect_faces(image);
+        image = webcam->get_image();
+        faces = face_detector->detect_faces(image);
 
         if (!faces.empty()) {
             tracked_face = face_detector->find_tracked_face(faces, tracked_face);
             face_landmarks = landmark_detector->detect_landmarks(image, tracked_face);
             face_rotation = feature_detector.detect_face_direction(face_landmarks);
 
-            cv::cvtColor(image, image, CV_BGR2GRAY);
-            cv::cvtColor(image, image, CV_GRAY2BGR);
+            cv::cvtColor(image, image, cv::COLOR_BGR2GRAY);
+            cv::cvtColor(image, image, cv::COLOR_GRAY2BGR);
 
             cv::rectangle(image, tracked_face, cv::Scalar(0, 0, 255));
             for (auto mark : face_landmarks) {
                 cv::circle(image, cv::Point(mark.x, mark.y), 1, cv::Scalar(0,0,0), -1);
             }
-        } else {
-            cv::cvtColor(image, image, CV_BGR2GRAY);
+
         }
 
         cv::imshow("WebCam output", image);
 
-        int keycode = cv::waitKey(30);
+        keycode = cv::waitKey(30);
+
         // if (keycode == 27)
         if (keycode > 0)
             break;
@@ -75,11 +79,10 @@ int main(int argc, char* argv[])
 
         render->set_model_transformation(head, rotation_matrix);
         render->render_scene();
-
     }
+
     webcam->close_stream();
     glfwSetWindowShouldClose(render->window, true);
-
 
     return 0;
 }
